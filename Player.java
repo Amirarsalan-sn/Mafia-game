@@ -14,4 +14,8 @@ public abstract class Player {
     public Roll getRoll() {
         return roll;
     }
+
+    public void setRoll(Roll roll) {
+        this.roll = roll;
+    }
 }
