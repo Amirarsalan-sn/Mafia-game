@@ -1,2 +1,5 @@
-package PACKAGE_NAME;public class Informer {
+public class Informer extends Player {
+    public Informer(String name, Roll roll) {
+        super(name, Roll.informer);
+    }
 }
