@@ -1,8 +1,7 @@
 public class Player {
     private String name ;
     private Role role ;
-    private String[] voters = new String[100] ;
-    private int votersIterator = 0 ;
+    private int voters = 0 ;
     private boolean isSilenced = false ;
     private boolean isAlive = true ;
 
@@ -15,12 +14,12 @@ public class Player {
         this.name = name;
     }
 
-    public void addVoters(String name) {
-        voters[votersIterator++] = name ;
+    public void addVoters() {
+        voters++ ;
     }
 
     public void deleteVoters () {
-        voters = new String[100] ;
+        voters = 0 ;
     }
 
     public String getName() {
@@ -39,8 +38,8 @@ public class Player {
         return isAlive;
     }
 
-    public int getVotersIterator() {
-        return votersIterator;
+    public int getVoters() {
+        return voters;
     }
 
     public void setRole(Role role) {

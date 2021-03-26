@@ -33,7 +33,7 @@ public class Game {
         for (int i = 0; i < playerIterator; i++) {
             result += players[i].getName() + ": " + players[i].getRole().name() + "\n" ;
         }
-        return result + "\nReady? Set! Go.\n" ;
+        return result + "\nReady? Set! Go." ;
     }
 
     public static void main(String[] args) {
@@ -41,7 +41,7 @@ public class Game {
         Scanner scanner = new Scanner(System.in) ;
         game : while (scanner.hasNext()) {
             String[] command = scanner.nextLine().split(" ") ;
-            if(command[0].equals("creat_game")) {
+            if(command[0].equals("create_game")) {
                 god = new Game() ;
                 for (int i = 1; i < command.length ; i++) {
                     god.addPlayer(new Player(command[i]));
@@ -68,7 +68,7 @@ public class Game {
                 } else {
                     god.started = true ;
                     System.out.println(god.toString());
-                    start : while(scanner.hasNext()) {
+                    start : while(true) {
                         System.out.println("Day " + god.dayIterator++) ;
                         Day : while(scanner.hasNext()) {
                             command = scanner.nextLine().split(" ") ;
@@ -84,7 +84,7 @@ public class Game {
                                 } else if (!god.players[number0].isAlive()) {
                                     System.out.println("voter already dead"); // new , i added this one .
                                 } else {
-                                    god.players[number1].addVoters(command[0]);
+                                    god.players[number1].addVoters();
                                 }
                             } else if (command.length == 1 && command[0].equals("end_vote")) {
                                 int num = god.findMax() ;
@@ -97,10 +97,16 @@ public class Game {
                                     break game;
                                 } else {
                                     deadBodies[0].setAlive(false);
-                                    god.playerIterator-- ;
                                     System.out.println(deadBodies[0].getName() + "died");
+                                    for (int i = 0; i < god.playerIterator; i++) {
+                                        god.players[i].deleteVoters();
+                                    }
                                     break Day;
                                 }
+                            } else if (command[0].equals("start_game")) {
+                                System.out.println("game has already started");
+                            } else {
+                                System.err.println("command not found !");
                             }
                         }
                         System.out.println("Night " + god.nightIterator++) ;
@@ -109,6 +115,8 @@ public class Game {
                         }
                     }
                 }
+            } else {
+                System.err.println("command not found !");
             }
         }
     }
@@ -116,17 +124,17 @@ public class Game {
     private Player[] findVotee(int num) {
         List<Player> votees = new ArrayList<Player>();
         for (int i = 0; i < playerIterator; i++) {
-            if(players[i].getVotersIterator() == num)
+            if(players[i].getVoters() == num)
                 votees.add(players[i]) ;
         }
-        return (Player[])votees.toArray() ;
+        return votees.toArray(Player[]::new) ;
     }
 
     private int findMax() {
-        int max = players[0].getVotersIterator() ;
+        int max = players[0].getVoters() ;
         for (int i = 1; i < playerIterator; i++) {
-            if(max < players[i].getVotersIterator())
-                max = players[i].getVotersIterator() ;
+            if(max < players[i].getVoters())
+                max = players[i].getVoters() ;
         }
         return max ;
     }
