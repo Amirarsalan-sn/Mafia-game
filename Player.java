@@ -1,10 +1,10 @@
 public class Player {
     private String name ;
-    private Roll roll ;
+    private Role role ;
 
-    public Player(String name, Roll roll) {
+    public Player(String name, Role roll) {
         this.name = name;
-        this.roll = roll;
+        this.role = roll;
     }
 
     public Player(String name) {
@@ -15,11 +15,11 @@ public class Player {
         return name;
     }
 
-    public Roll getRoll() {
-        return roll;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoll(Roll roll) {
-        this.roll = roll;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

@@ -1,3 +1,3 @@
-public enum Roll {
+public enum Role {
     Joker , villager , detective , doctor , bulletproof , mafia , godfather , silencer , informer ,
 }

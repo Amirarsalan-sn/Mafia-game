@@ -1,8 +1,10 @@
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Game {
-    public Player[] players = new Player[100] ;
+    private Player[] players = new Player[100] ;
     private int playerIterator = 0 ;
+    private boolean started = false ;
 
     private void addPlayer (Player player) {
         players[playerIterator++] = player ;
@@ -17,9 +19,18 @@ public class Game {
     }
 
     private void swap (Player player1 , Player player2) {
-        Roll temp = player1.getRoll() ;
-        player1.setRoll(player2.getRoll());
-        player2.setRoll(temp);
+        Role temp = player1.getRole() ;
+        player1.setRole(player2.getRole());
+        player2.setRole(temp);
+    }
+
+    @Override
+    public String toString() {
+        String result = "" ;
+        for (int i = 0; i < playerIterator; i++) {
+            result += players[i].getName() + ": " + players[i].getRole().name() + "\n" ;
+        }
+        return result + "Ready? Set! Go." ;
     }
 
     public static void main(String[] args) {
@@ -40,16 +51,36 @@ public class Game {
                 } else if (!contains(command[2])) {
                     System.out.println("role not found");
                 } else {
-                    god.players[god.findPlayer(command[1])].setRoll(Roll.valueOf(command[2]));
-                    convert(god.players ,god.findPlayer(command[1])) ;
+                    int number = god.findPlayer(command[1]) ;
+                    god.players[number].setRole(Role.valueOf(command[2]));
+                    convert(god.players ,number) ;
+                }
+            } else if (command[0].equals("start_game")) {
+                if(god == null) {
+                    System.out.println("no game created");
+                } else if (god.started) {
+                    System.out.println("game has already started");
+                } else if(!god.checkRoles()){
+                    System.out.println("one or more player do not have a role");
+                } else {
+                    god.started = true ;
+                    System.out.println(god.toString());
                 }
             }
         }
     }
 
+    private boolean checkRoles() {
+        for (int i = 0; i < playerIterator; i++) {
+            if(players[i].getRole() == null)
+                return false ;
+        }
+        return true ;
+    }
+
     private static void convert(Player[] players, int player) {
         Player temp = players[player] ;
-        switch (players[player].getRoll()) {
+        switch (players[player].getRole()) {
             case Joker :
                 players[player] = new Joker(temp.getName()) ;
                 break ;
@@ -81,8 +112,8 @@ public class Game {
     }
 
     private static boolean contains(String s) {
-        for (Roll roll: Roll.values()) {
-            if(roll.name().equals(s))
+        for (Role role: Role.values()) {
+            if(role.name().equals(s))
                 return true ;
         }
         return false ;
