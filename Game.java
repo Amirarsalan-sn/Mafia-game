@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Game {
@@ -31,13 +33,13 @@ public class Game {
         for (int i = 0; i < playerIterator; i++) {
             result += players[i].getName() + ": " + players[i].getRole().name() + "\n" ;
         }
-        return result + "\nReady? Set! Go." ;
+        return result + "\nReady? Set! Go.\n" ;
     }
 
     public static void main(String[] args) {
         Game god = null ;
         Scanner scanner = new Scanner(System.in) ;
-        while (scanner.hasNext()) {
+        game : while (scanner.hasNext()) {
             String[] command = scanner.nextLine().split(" ") ;
             if(command[0].equals("creat_game")) {
                 god = new Game() ;
@@ -66,19 +68,67 @@ public class Game {
                 } else {
                     god.started = true ;
                     System.out.println(god.toString());
-                    game : while(scanner.hasNext()) {
+                    start : while(scanner.hasNext()) {
+                        System.out.println("Day " + god.dayIterator++) ;
                         Day : while(scanner.hasNext()) {
-                            System.out.println("Day " + god.dayIterator++) ;
-                            command = scanner.nextLine().split(" " ) ;
+                            command = scanner.nextLine().split(" ") ;
+                            if (command.length == 2) {
+                                int number0 = god.findPlayer(command[0]);
+                                int number1 = god.findPlayer(command[1]);
+                                if (number0 == -1 || number1 == -1) {
+                                    System.out.println("user not found");
+                                } else if (god.players[number0].isSilenced()) {
+                                    System.out.println("voter is silenced");
+                                } else if (!god.players[number1].isAlive()) {
+                                    System.out.println("votee already dead");
+                                } else if (!god.players[number0].isAlive()) {
+                                    System.out.println("voter already dead"); // new , i added this one .
+                                } else {
+                                    god.players[number1].addVoters(command[0]);
+                                }
+                            } else if (command.length == 1 && command[0].equals("end_vote")) {
+                                int num = god.findMax() ;
+                                Player[] deadBodies = god.findVotee(num) ;
+                                if(deadBodies.length > 1) {
+                                    System.out.println("nobody died");
+                                    break Day;
+                                } else if(deadBodies[0].getRole().equals(Role.Joker)) {
+                                    System.out.println("Joker won!");
+                                    break game;
+                                } else {
+                                    deadBodies[0].setAlive(false);
+                                    god.playerIterator-- ;
+                                    System.out.println(deadBodies[0].getName() + "died");
+                                    break Day;
+                                }
+                            }
                         }
+                        System.out.println("Night " + god.nightIterator++) ;
                         Night : while (scanner.hasNext()) {
-                            System.out.println("Night " + god.nightIterator++) ;
                             command = scanner.nextLine().split(" ") ;
                         }
                     }
                 }
             }
         }
+    }
+
+    private Player[] findVotee(int num) {
+        List<Player> votees = new ArrayList<Player>();
+        for (int i = 0; i < playerIterator; i++) {
+            if(players[i].getVotersIterator() == num)
+                votees.add(players[i]) ;
+        }
+        return (Player[])votees.toArray() ;
+    }
+
+    private int findMax() {
+        int max = players[0].getVotersIterator() ;
+        for (int i = 1; i < playerIterator; i++) {
+            if(max < players[i].getVotersIterator())
+                max = players[i].getVotersIterator() ;
+        }
+        return max ;
     }
 
     private boolean checkRoles() {
