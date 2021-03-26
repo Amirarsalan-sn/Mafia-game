@@ -4,10 +4,12 @@ import java.util.Scanner;
 
 public class Game {
     private Player[] players = new Player[100] ;
+    private List<Player> awakes = new ArrayList<Player>() ;
     private int playerIterator = 0 ;
     private boolean started = false ;
     private int dayIterator = 1 ;
     private int nightIterator = 1 ;
+
 
     private void addPlayer (Player player) {
         players[playerIterator++] = player ;
@@ -69,6 +71,7 @@ public class Game {
                     god.started = true ;
                     System.out.println(god.toString());
                     start : while(true) {
+                        god.assignAwakes();
                         System.out.println("Day " + god.dayIterator++) ;
                         Day : while(scanner.hasNext()) {
                             command = scanner.nextLine().split(" ") ;
@@ -110,6 +113,7 @@ public class Game {
                             }
                         }
                         System.out.println("Night " + god.nightIterator++) ;
+                        System.out.println(god.nightToString());
                         Night : while (scanner.hasNext()) {
                             command = scanner.nextLine().split(" ") ;
                         }
@@ -119,6 +123,35 @@ public class Game {
                 System.err.println("command not found !");
             }
         }
+    }
+
+    private void assignAwakes() {
+        for (int i = 0; i < playerIterator; i++) {
+            if(isAwake(players[i])) {
+                awakes.add(players[i]) ;
+            }
+        }
+    }
+
+    private boolean isAwake(Player player) {
+        switch (player.getRole()) {
+            case mafia :
+            case godfather :
+            case detective :
+            case doctor :
+            case silencer :
+                return true ;
+        }
+        return false ;
+    }
+
+    public String nightToString() {
+        String result = "" ;
+        for (int i = 0; i < awakes.size(); i++) {
+            if(awakes.get(i).isAlive())
+                result += awakes.get(i).getName() + ": " + awakes.get(i).getRole().name()+"\n";
+        }
+        return result;
     }
 
     private Player[] findVotee(int num) {
