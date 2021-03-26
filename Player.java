@@ -2,6 +2,7 @@ public class Player {
     private String name ;
     private Role role ;
     private int voters = 0 ;
+    private Player vote ;
     private boolean isSilenced = false ;
     private boolean isAlive = true ;
     private boolean saved = false;
@@ -29,6 +30,10 @@ public class Player {
 
     public Role getRole() {
         return role;
+    }
+
+    public Player getVote() {
+        return vote;
     }
 
     public boolean isSilenced() {
@@ -69,5 +74,9 @@ public class Player {
 
     public void setSaved(boolean b) {
         this.saved = b ;
+    }
+
+    public void setVote(Player vote) {
+        this.vote = vote;
     }
 }
