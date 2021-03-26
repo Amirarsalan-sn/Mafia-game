@@ -4,6 +4,7 @@ public class Player {
     private int voters = 0 ;
     private boolean isSilenced = false ;
     private boolean isAlive = true ;
+    private boolean saved = false;
 
     public Player(String name, Role roll) {
         this.name = name;
@@ -42,6 +43,14 @@ public class Player {
         return voters;
     }
 
+    public boolean isMafia() {
+        return false ;
+    }
+
+    public boolean isAwake() {
+        return false ;
+    }
+
     public void setRole(Role role) {
         this.role = role;
     }
@@ -52,5 +61,13 @@ public class Player {
 
     public void setAlive(boolean alive) {
         isAlive = alive;
+    }
+
+    public boolean getSaved() {
+        return saved ;
+    }
+
+    public void setSaved(boolean b) {
+        this.saved = b ;
     }
 }

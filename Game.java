@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 public class Game {
     private Player[] players = new Player[100] ;
-    private List<Player> awakes = new ArrayList<Player>() ;
     private int playerIterator = 0 ;
     private boolean started = false ;
     private int dayIterator = 1 ;
@@ -71,7 +70,6 @@ public class Game {
                     god.started = true ;
                     System.out.println(god.toString());
                     start : while(true) {
-                        god.assignAwakes();
                         System.out.println("Day " + god.dayIterator++) ;
                         Day : while(scanner.hasNext()) {
                             command = scanner.nextLine().split(" ") ;
@@ -80,12 +78,12 @@ public class Game {
                                 int number1 = god.findPlayer(command[1]);
                                 if (number0 == -1 || number1 == -1) {
                                     System.out.println("user not found");
+                                } else if (!god.players[number0].isAlive()) {
+                                    System.out.println("voter already dead"); // new , i added this one .
                                 } else if (god.players[number0].isSilenced()) {
                                     System.out.println("voter is silenced");
                                 } else if (!god.players[number1].isAlive()) {
                                     System.out.println("votee already dead");
-                                } else if (!god.players[number0].isAlive()) {
-                                    System.out.println("voter already dead"); // new , i added this one .
                                 } else {
                                     god.players[number1].addVoters();
                                 }
@@ -115,7 +113,47 @@ public class Game {
                         System.out.println("Night " + god.nightIterator++) ;
                         System.out.println(god.nightToString());
                         Night : while (scanner.hasNext()) {
-                            command = scanner.nextLine().split(" ") ;
+                            command = scanner.nextLine().split(" ");
+                            if (command.length == 2) {
+                                int number0 = god.findPlayer(command[0]);
+                                int number1 = god.findPlayer(command[1]);
+                                if (number0 == -1) {
+                                    System.out.println("user not joined");
+                                } else if (!god.players[number0].isAwake()) {//silence for mafias ???
+                                    System.out.println("user can not wake up during night");
+                                } else if (!god.players[number0].isAlive()) {
+                                    System.out.println("user already dead");
+                                } else {
+                                    switch (god.players[number0].getRole()) {
+                                        case silencer:
+                                            if (!((Silencer) god.players[number0]).isSilencedSomeone()) {
+                                                if(checkSecond(number1 , god))
+                                                    god.players[number1].setSilenced(true);
+                                            } else {
+                                                if(checkSecond(number1 , god))
+                                                    god.players[number1].addVoters();
+                                            }
+                                            break ;
+                                        case mafia:
+                                        case godfather:
+                                            if(checkSecond(number1 , god))
+                                                god.players[number1].addVoters();
+                                            break ;
+                                        case doctor :
+                                            if(checkSecond(number1 , god))
+                                                god.players[number1].setSaved(true);
+                                        case detective :
+                                            if(checkSecond2(number0 , number1 , god))
+                                                System.out.println(god.players[number1].isMafia());
+                                            ((Detective)god.players[number0]).setAsked(true);
+                                            break ;
+                                    }
+                                }
+                            }else if (command.length == 1 && command[0].equals("end_night")) {
+
+                            } else {
+                                System.err.println("command not found !");
+                            }
                         }
                     }
                 }
@@ -125,31 +163,36 @@ public class Game {
         }
     }
 
-    private void assignAwakes() {
-        for (int i = 0; i < playerIterator; i++) {
-            if(isAwake(players[i])) {
-                awakes.add(players[i]) ;
-            }
+    private static boolean checkSecond2(int number0, int number1, Game god) {
+        if(number1 == -1) {
+            System.out.println("user not found");
+            return false ;
+        } if (((Detective)god.players[number0]).isAsked()) {
+            System.out.println("detective has already asked");
+            return false;
+        }if(!god.players[number1].isAlive()) {
+            System.out.println("suspect is dead");
+            return false ;
         }
+        return true;
     }
 
-    private boolean isAwake(Player player) {
-        switch (player.getRole()) {
-            case mafia :
-            case godfather :
-            case detective :
-            case doctor :
-            case silencer :
-                return true ;
+    private static boolean checkSecond(int number1 , Game god) {
+        if(number1 == -1) {
+            System.out.println("user not joined");
+            return false;
+        } if (!god.players[number1].isAlive()) {
+            System.out.println("votee already dead");
+            return false ;
         }
-        return false ;
+        return true ;
     }
 
     public String nightToString() {
         String result = "" ;
-        for (int i = 0; i < awakes.size(); i++) {
-            if(awakes.get(i).isAlive())
-                result += awakes.get(i).getName() + ": " + awakes.get(i).getRole().name()+"\n";
+        for (int i = 0; i < playerIterator; i++) {
+            if(players[i].isAwake() && players[i].isAlive())
+                result += players[i].getName() + ": " + players[i].getRole().name()+"\n";
         }
         return result;
     }
