@@ -1,10 +1,11 @@
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Game {
     private Player[] players = new Player[100] ;
     private int playerIterator = 0 ;
     private boolean started = false ;
+    private int dayIterator = 1 ;
+    private int nightIterator = 1 ;
 
     private void addPlayer (Player player) {
         players[playerIterator++] = player ;
@@ -30,7 +31,7 @@ public class Game {
         for (int i = 0; i < playerIterator; i++) {
             result += players[i].getName() + ": " + players[i].getRole().name() + "\n" ;
         }
-        return result + "Ready? Set! Go." ;
+        return result + "\nReady? Set! Go." ;
     }
 
     public static void main(String[] args) {
@@ -65,6 +66,16 @@ public class Game {
                 } else {
                     god.started = true ;
                     System.out.println(god.toString());
+                    game : while(scanner.hasNext()) {
+                        Day : while(scanner.hasNext()) {
+                            System.out.println("Day " + god.dayIterator++) ;
+                            command = scanner.nextLine().split(" " ) ;
+                        }
+                        Night : while (scanner.hasNext()) {
+                            System.out.println("Night " + god.nightIterator++) ;
+                            command = scanner.nextLine().split(" ") ;
+                        }
+                    }
                 }
             }
         }

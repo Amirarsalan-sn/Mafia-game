@@ -1,5 +1,5 @@
 public class Detective extends Player {
     public Detective(String name) {
-        super(name, Roll.detective);
+        super(name, Role.detective);
     }
 }

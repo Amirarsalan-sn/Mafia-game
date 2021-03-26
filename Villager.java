@@ -1,5 +1,5 @@
 public class Villager extends Player {
     public Villager(String name) {
-        super(name, Roll.villager);
+        super(name, Role.villager);
     }
 }
