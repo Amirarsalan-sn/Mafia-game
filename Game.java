@@ -41,14 +41,48 @@ public class Game {
                     System.out.println("role not found");
                 } else {
                     god.players[god.findPlayer(command[1])].setRoll(Roll.valueOf(command[2]));
+                    convert(god.players ,god.findPlayer(command[1])) ;
                 }
             }
         }
     }
 
+    private static void convert(Player[] players, int player) {
+        Player temp = players[player] ;
+        switch (players[player].getRoll()) {
+            case Joker :
+                players[player] = new Joker(temp.getName()) ;
+                break ;
+            case mafia :
+                players[player] = new Mafia(temp.getName()) ;
+                break ;
+            case doctor :
+                players[player] = new Doctor(temp.getName()) ;
+                break ;
+            case informer :
+                players[player] = new Informer(temp.getName()) ;
+                break ;
+            case silencer :
+                players[player] = new Silencer(temp.getName()) ;
+                break ;
+            case villager :
+                players[player] = new Villager(temp.getName()) ;
+                break ;
+            case detective :
+                players[player] = new Detective(temp.getName()) ;
+                break ;
+            case godfather :
+                players[player] = new Godfather(temp.getName()) ;
+                break ;
+            case bulletproof :
+                players[player] = new Bulletproof(temp.getName()) ;
+                break ;
+        }
+    }
+
     private static boolean contains(String s) {
         for (Roll roll: Roll.values()) {
-            if(roll.equals(s))
+            if(roll.name().equals(s))
                 return true ;
         }
         return false ;

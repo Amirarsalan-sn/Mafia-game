@@ -1,5 +1,5 @@
 public class Joker extends Player {
-    public Joker(String name, Roll roll) {
+    public Joker(String name) {
         super(name, Roll.Joker);
     }
 }

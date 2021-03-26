@@ -1,5 +1,5 @@
 public class Silencer extends Player {
-    public Silencer(String name, Roll roll) {
+    public Silencer(String name) {
         super(name, Roll.silencer);
     }
 }

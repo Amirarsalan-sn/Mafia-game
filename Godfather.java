@@ -1,5 +1,5 @@
 public class Godfather extends Player {
-    public Godfather(String name, Roll roll) {
+    public Godfather(String name) {
         super(name, Roll.godfather);
     }
 }

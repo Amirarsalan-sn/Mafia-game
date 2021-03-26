@@ -1,5 +1,5 @@
 public class Mafia extends Player {
-    public Mafia(String name, Roll roll) {
+    public Mafia(String name) {
         super(name, Roll.mafia);
     }
 }
