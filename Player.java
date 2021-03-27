@@ -60,6 +60,10 @@ public class Player {
         this.role = role;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void setSilenced(boolean silenced) {
         isSilenced = silenced;
     }

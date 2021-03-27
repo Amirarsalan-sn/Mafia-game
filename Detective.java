@@ -1,4 +1,4 @@
-public class Detective extends Player {
+public class Detective extends Villager {
     private boolean asked = false ;
 
     public Detective(String name) {

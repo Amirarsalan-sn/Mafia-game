@@ -1,4 +1,4 @@
-public class Doctor extends Player {
+public class Doctor extends Villager {
     public Doctor(String name) {
         super(name, Role.doctor);
     }

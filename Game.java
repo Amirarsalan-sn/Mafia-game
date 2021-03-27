@@ -1,9 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Game {
     private Player[] players = new Player[100] ;
+    public List<Player> mafias = new ArrayList<Player>() ;
+    private Player joker ;
     private int playerIterator = 0 ;
     private boolean started = false ;
     private int dayIterator = 1 ;
@@ -24,12 +27,6 @@ public class Game {
                 return i ;
         }
         return -1;
-    }
-
-    private void swap (Player player1 , Player player2) {
-        Role temp = player1.getRole() ;
-        player1.setRole(player2.getRole());
-        player2.setRole(temp);
     }
 
     @Override
@@ -53,6 +50,14 @@ public class Game {
         villagerNumber = playerIterator - mafiaNumber -jokerNumber ;
     }
 
+    public Player getJoker() {
+        return joker;
+    }
+
+    public void setJoker(Player joker) {
+        this.joker = joker;
+    }
+
     private void subtractVillagerNumber () {
         villagerNumber -- ;
     }
@@ -61,6 +66,9 @@ public class Game {
         jokerNumber ++ ;
     }
 
+    public int getMafiaNumber() {
+        return mafiaNumber;
+    }
 
     public static void main(String[] args) {
         Game god = null ;
@@ -123,7 +131,9 @@ public class Game {
                                     break Day;
                                 }
                             } else if (command[0].equals("start_game")) {
-                                System.out.println("game has already started");
+                                System.out.println("game has already started");//added
+                            } else if (command[0].equals("swap_character")) {
+                                System.out.println("voting in progress");
                             } else if (command[0].equals("get_game_state")) {
                                 System.out.println(god.statusToString());
                             } else {
@@ -161,8 +171,9 @@ public class Game {
                                                 god.players[number0].setVote(god.players[number1]);
                                             break ;
                                         case doctor :
-                                            if(checkSecond(number1 , god))
+                                            if(checkSecond(number1 , god)) {
                                                 god.players[number1].setSaved(true);
+                                            }
                                         case detective :
                                             if(checkSecond2(number0 , number1 , god)) {
                                                 System.out.println(god.players[number1].isMafia());
@@ -174,12 +185,19 @@ public class Game {
                             }else if (command.length == 1 && command[0].equals("end_night")) {
                                 god.gameStatusAfterNight = "mafia tried to kill " ;
                                 god.completeVotes();
+                                god.completeTargets() ;
                                 int num = god.findMax();
                                 Player[] deadBodies = god.findVotee(num) ;
                                 for (int i = 0; i < deadBodies.length; i++) {
                                     god.gameStatusAfterNight += deadBodies[i].getName() + " " ;
                                     if(deadBodies[i].getSaved())
                                         deadBodies[i] = null;
+                                    if(deadBodies[i] instanceof Bulletproof) {
+                                        if(!((Bulletproof)deadBodies[i]).isBeingShot()) {
+                                            ((Bulletproof) deadBodies[i]).setBeingShot(true);
+                                            deadBodies[i] = null;
+                                        }
+                                    }
                                 }
                                 if(god.checkDeadBodiesAtNight(deadBodies , silence))
                                     break game;
@@ -187,14 +205,24 @@ public class Game {
                                     break Night;
 
                             } else if (command[0].equals("start_game")) {
-                                System.out.println("game has already started");
+                                System.out.println("game has already started");//added
                             } else if (command[0].equals("get_game_state")) {
                                 System.out.println(god.statusToString());
+                            } else if (command[0].equals("swap_character")) {
+                                System.out.println("can’t swap before end of night");
                             } else {
                                 System.err.println("command not found !");
                             }
                         }
                         god.deleter();
+                        command = scanner.nextLine().split(" " );
+                        if(command[0].equals("swap_character") && command.length ==3) {
+                            int number0 = god.findPlayer(command[1]);
+                            int number1 = god.findPlayer(command[2]);
+                            Swap.swap(god.players[number0] , god.players[number1]);
+                        } else {
+                            System.err.println("command not found");
+                        }
                     }
                 }
             } else if (command[0].equals("get_game_state")) {
@@ -204,6 +232,15 @@ public class Game {
                     System.out.println(god.statusToString());
             } else {
                 System.err.println("command not found !");
+            }
+        }
+        scanner.close();
+    }
+
+    private void completeTargets() {
+        for (int i = 0; i < mafias.size(); i++) {
+            if(mafias.get(i).isAlive()) {
+                Mafia.voteeNames.add(mafias.get(i).getVote());
             }
         }
     }
@@ -227,6 +264,9 @@ public class Game {
                     if(deadBodies[i].getRole().equals(Role.Joker)) {
                         System.out.println("Joker won!");
                         return true ;
+                    } if(deadBodies[i].getRole().equals(Role.informer)) {
+                        gameStatusAfterNight += "\n" + deadBodies[i].getName() + " was an informer\n" ;
+                        gameStatusAfterNight += ((Informer)deadBodies[i]).informerFinalize(this) ;
                     }
                     break;
                 }
@@ -353,10 +393,12 @@ public class Game {
             case Joker :
                 players[player] = new Joker(temp.getName()) ;
                 addJokerNumber();
+                setJoker(players[player]);
                 break ;
             case mafia :
                 players[player] = new Mafia(temp.getName()) ;
                 addMafiaNumber();
+                mafias.add(players[player]) ;
                 break ;
             case doctor :
                 players[player] = new Doctor(temp.getName()) ;
@@ -367,6 +409,7 @@ public class Game {
             case silencer :
                 players[player] = new Silencer(temp.getName()) ;
                 addMafiaNumber();
+                mafias.add(players[player]) ;
                 break ;
             case villager :
                 players[player] = new Villager(temp.getName()) ;
@@ -377,6 +420,7 @@ public class Game {
             case godfather :
                 players[player] = new Godfather(temp.getName()) ;
                 addMafiaNumber();
+                mafias.add(players[player]) ;
                 break ;
             case bulletproof :
                 players[player] = new Bulletproof(temp.getName()) ;
