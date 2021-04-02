@@ -6,6 +6,7 @@ public class Player {
     private boolean isSilenced = false ;
     private boolean isAlive = true ;
     private boolean saved = false;
+    private boolean votedToBeKilled = false ;
 
     public Player(String name, Role roll) {
         this.name = name;
@@ -30,6 +31,10 @@ public class Player {
 
     public Role getRole() {
         return role;
+    }
+
+    public boolean isVotedToBeKilled() {
+        return votedToBeKilled;
     }
 
     public Player getVote() {
@@ -58,6 +63,10 @@ public class Player {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public void setVotedToBeKilled(boolean votedToBeKilled) {
+        this.votedToBeKilled = votedToBeKilled;
     }
 
     public void setName(String name) {

@@ -17,7 +17,7 @@ public class Mafia extends Player {
     }
 
     public void setInformed(boolean informed) {
-        informed = informed;
+        this.informed = informed;
     }
 
     @Override

@@ -11,17 +11,24 @@ public class Informer extends Villager {
             case 1 :
                 result += "There is a mafia who’s name starts with " ;
                 for (int i = 0; i < god.mafias.size(); i++) {
-                    if(god.mafias.get(i).isAlive() && !((Mafia)god.mafias.get(i)).isInformed())
-                        result += god.mafias.get(i).getName().charAt(0) ;
+                    if(god.mafias.get(i).isAlive() && !((Mafia)god.mafias.get(i)).isInformed()) {
+                        result += god.mafias.get(i).getName().charAt(0);
+                        break;
+                    }
                 }
                 break;
             case 2 :
-                result += randomName() ;
-                result += " was voted to be killed" ;
+                if(god.getDayIterator() != 1) {
+                    result += randomName();
+                    result += " was voted to be killed";
+                    break;
+                }
             case 3 :
                 result += "Number of alive mafia : " + god.getMafiaNumber() ;
+                break;
             case 4 :
                 result += "There is a joker who’s name starts with " + god.getJoker().getName().charAt(0) ;
+                break;
         }
         return result;
     }
