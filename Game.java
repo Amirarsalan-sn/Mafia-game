@@ -221,7 +221,7 @@ public class Game {
                             }
                         }
                         god.nightDeleter();
-                        swap : while(true) {
+                        /*swap : while(true) {
                             command = scanner.nextLine().split(" ");
                             if (command[0].equals("swap_character") && command.length == 3) {
                                 int number0 = god.findPlayer(command[1]);
@@ -238,7 +238,7 @@ public class Game {
                             } else {
                                 System.err.println("command not found !");
                             }
-                        }
+                        }*/
                     }
                 }
             } else if (command[0].equals("get_game_state")) {
@@ -307,7 +307,7 @@ public class Game {
                             return true;
                         }
                         if (deadBodies[i].getRole().equals(Role.informer)) {
-                            gameStatusAfterNight += "\n" + deadBodies[i].getName() + " was an informer\n";
+                            gameStatusAfterNight += deadBodies[i].getName() + " was an informer\n";
                             gameStatusAfterNight += ((Informer) deadBodies[i]).informerFinalize(this);
                         }
                     } else {
